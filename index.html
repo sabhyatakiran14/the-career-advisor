@@ -34,6 +34,28 @@
       </div>
     </header>
 
+    <div class="contact-strip">
+      <div class="wrap contact-strip-inner">
+        <span class="contact-strip-label">Reach us</span>
+        <a class="contact-chip" href="tel:+917842763001">Call +91 78427 63001</a>
+        <a
+          class="contact-chip contact-chip--wa"
+          href="https://wa.me/917842763001"
+          target="_blank"
+          rel="noopener noreferrer"
+          >WhatsApp</a
+        >
+        <a class="contact-chip" href="mailto:counsellorpoint2019@gmail.com">counsellorpoint2019@gmail.com</a>
+        <a
+          class="contact-chip contact-chip--ig"
+          href="https://www.instagram.com/tca_since_2014/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Instagram @tca_since_2014</a
+        >
+      </div>
+    </div>
+
     <main>
       <section class="hero">
         <div class="wrap hero-grid">
@@ -518,8 +540,12 @@
               <span class="req-mark">*</span> are required.
             </p>
             <div class="notice" role="note">
-              <strong>Demo site:</strong> Submitting only shows a confirmation on this page. Wire
-              your own form endpoint (Formspree, Google Forms, or a backend) when you go live.
+              <strong>Google (email + sheet):</strong> Submissions are sent through a small Google
+              Apps Script web app (see <code class="inline-code">google-apps-script/EnquiryWebApp.gs</code>
+              and set your deployed URL in <code class="inline-code">config.js</code>). Until then,
+              submit opens your email to
+              <a href="mailto:counsellorpoint2019@gmail.com">counsellorpoint2019@gmail.com</a> with
+              the form text filled in.
             </div>
           </div>
 
@@ -643,10 +669,10 @@
               </label>
               <fieldset class="checkbox-group">
                 <legend>How can we help? (select any)</legend>
-                <label class="check"><input type="checkbox" name="help" value="Admission" /> Admission process</label>
-                <label class="check"><input type="checkbox" name="help" value="Scholarship" /> Scholarships / fees</label>
-                <label class="check"><input type="checkbox" name="help" value="Demo class" /> Demo / trial class</label>
-                <label class="check"><input type="checkbox" name="help" value="Syllabus" /> Syllabus &amp; batch timing</label>
+                <label class="check"><input type="checkbox" class="help-cb" value="Admission" /> Admission process</label>
+                <label class="check"><input type="checkbox" class="help-cb" value="Scholarship" /> Scholarships / fees</label>
+                <label class="check"><input type="checkbox" class="help-cb" value="Demo class" /> Demo / trial class</label>
+                <label class="check"><input type="checkbox" class="help-cb" value="Syllabus" /> Syllabus &amp; batch timing</label>
               </fieldset>
               <label class="field">
                 <span>Preferred callback time</span>
@@ -682,17 +708,30 @@
 
     <footer class="site-footer">
       <div class="wrap footer-inner">
-        <div>
+        <div class="footer-brand">
           <strong>The Career Advisor</strong>
-          <p class="muted small">Career and admissions guidance. Replace this footer with your address and legal links.</p>
+          <p class="muted small">Career and admissions guidance for students and families.</p>
         </div>
         <div class="footer-links">
-          <a href="mailto:hello@example.com">hello@example.com</a>
-          <a href="tel:+911234567890">+91 12345 67890</a>
+          <a href="mailto:counsellorpoint2019@gmail.com">counsellorpoint2019@gmail.com</a>
+          <a href="tel:+917842763001">+91 78427 63001</a>
+          <a href="https://wa.me/917842763001" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a href="https://www.instagram.com/tca_since_2014/" target="_blank" rel="noopener noreferrer"
+            >Instagram @tca_since_2014</a
+          >
+          <a href="#enquiry">Enquiry form</a>
         </div>
       </div>
     </footer>
 
+    <iframe
+      class="visually-hidden"
+      title="Enquiry submission"
+      name="tca-enquiry-target"
+      id="tca-enquiry-target"
+    ></iframe>
+
+    <script src="config.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

@@ -18,6 +18,11 @@
   var form = document.getElementById("enquiry-form");
   var statusEl = document.getElementById("form-status");
 
+  function enquiryEndpoint() {
+    if (typeof window === "undefined" || !window.TCA_ENQUIRY_WEB_APP_URL) return "";
+    return String(window.TCA_ENQUIRY_WEB_APP_URL).trim();
+  }
+
   function setError(name, message) {
     var el = document.querySelector('[data-error-for="' + name + '"]');
     if (el) el.textContent = message || "";
@@ -31,6 +36,63 @@
 
   function digitsOnly(s) {
     return (s || "").replace(/\D/g, "");
+  }
+
+  function ensureHelpTopicsField() {
+    if (!form) return null;
+    var el = form.querySelector('input[name="help_topics"]');
+    if (!el) {
+      el = document.createElement("input");
+      el.type = "hidden";
+      el.name = "help_topics";
+      form.appendChild(el);
+    }
+    var helps = [];
+    form.querySelectorAll(".help-cb:checked").forEach(function (cb) {
+      helps.push(cb.value);
+    });
+    el.value = helps.join(", ");
+    return el;
+  }
+
+  function formDataToLines(data) {
+    var order = [
+      "student_name",
+      "dob",
+      "gender",
+      "current_class",
+      "parent_name",
+      "relationship",
+      "phone",
+      "phone_alt",
+      "email",
+      "city",
+      "state",
+      "program_interest",
+      "help_topics",
+      "callback",
+      "message",
+      "consent",
+    ];
+    var lines = [];
+    order.forEach(function (key) {
+      var v = data.get(key);
+      if (v != null && String(v).trim() !== "") {
+        lines.push(key + ": " + String(v).trim());
+      }
+    });
+    return lines.join("\n");
+  }
+
+  function submitViaMailto(data) {
+    var body = formDataToLines(data);
+    var subject = "The Career Advisor — enquiry";
+    var mail =
+      "mailto:counsellorpoint2019@gmail.com?subject=" +
+      encodeURIComponent(subject) +
+      "&body=" +
+      encodeURIComponent(body);
+    window.location.href = mail;
   }
 
   if (!form) return;
@@ -59,9 +121,12 @@
     if (!phone) {
       setError("phone", "Please enter a mobile number.");
       ok = false;
-    } else if (digitsOnly(phone).length < 10) {
-      setError("phone", "Enter a valid 10-digit mobile number.");
-      ok = false;
+    } else {
+      var d = digitsOnly(phone);
+      if (d.length < 10) {
+        setError("phone", "Enter a valid mobile number (at least 10 digits).");
+        ok = false;
+      }
     }
 
     var email = (data.get("email") || "").toString().trim();
@@ -86,22 +151,31 @@
       return;
     }
 
-    var summary = {
-      student_name: data.get("student_name"),
-      parent_name: data.get("parent_name"),
-      phone: data.get("phone"),
-      email: data.get("email"),
-      city: data.get("city"),
-      program_interest: data.get("program_interest"),
-    };
+    ensureHelpTopicsField();
+    data = new FormData(form);
 
-    console.log("Enquiry payload (demo):", summary, Object.fromEntries(data.entries()));
+    var url = enquiryEndpoint();
+    if (url) {
+      form.action = url;
+      form.method = "post";
+      form.target = "tca-enquiry-target";
+      if (statusEl) statusEl.textContent = "Sending your enquiry…";
+      window.HTMLFormElement.prototype.submit.call(form);
+      setTimeout(function () {
+        form.reset();
+        clearErrors();
+        if (statusEl) {
+          statusEl.textContent =
+            "Thank you. If you do not hear back within two working days, message us on WhatsApp at +91 78427 63001.";
+        }
+      }, 800);
+      return;
+    }
 
+    submitViaMailto(data);
     if (statusEl) {
       statusEl.textContent =
-        "Thank you — your enquiry is recorded for this demo. Connect a server or form service to receive submissions.";
+        "Your email app should open with the enquiry text. Send the message to reach us at counsellorpoint2019@gmail.com. For a one-step form, add your Google Apps Script URL in config.js.";
     }
-    form.reset();
-    clearErrors();
   });
 })();
